@@ -56,6 +56,7 @@ import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Parameters.ParametersParameterComponent;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 //import org.hl7.fhir.r4.model.Enumerations.AdministrativeGenderEnum;
 
@@ -109,10 +110,8 @@ public class AddPersonController extends SimpleFormController {
 		String viewType = person.get(VIEW_TYPE);
 		String personType = person.get(PERSON_TYPE);
 		String personp = person.get(PATIENT_PRESENT);
-		if (StringUtils.isNotEmpty(personp)) {
-			return new ModelAndView(new RedirectView(request.getContextPath()
-			        + "/admin/patients/shortPatientForm.form?fhirPatientId=" + personp));
-		} else if (StringUtils.isEmpty(personId)) {
+		
+		if (StringUtils.isNotEmpty(personId)) {			
 			// if they didn't pick a person, continue on to the edit screen no matter what type of view was requested)
 			if ("view".equals(viewType) || "shortEdit".equals(viewType)) {
 				viewType = "shortEdit";
@@ -121,7 +120,10 @@ public class AddPersonController extends SimpleFormController {
 			}
 			
 			return new ModelAndView(new RedirectView(getPersonURL("", personType, viewType, request)));
-		} else {
+		} else if (StringUtils.isNotEmpty(personp)) {
+			return new ModelAndView(new RedirectView(request.getContextPath()
+			        + "/admin/patients/shortPatientForm.form?fhirPatientId=" + personp));
+		} else {			
 			// if they picked a person, go to the type of view that was requested
 			
 			// if they selected view, do a double check to make sure that type of person already exists
@@ -221,7 +223,7 @@ public class AddPersonController extends SimpleFormController {
 					person.put("gender", null);
 				}
 				
-				personList = new Vector<PersonListItem>();
+				//personList = new Vector<PersonListItem>();
 
 
 				// IGenericClient client = new FhirLegacyUIConfig().getFhirClient();
@@ -462,7 +464,7 @@ public class AddPersonController extends SimpleFormController {
 	 */
 	private Map<String, String> getParametersFromRequest(HttpServletRequest request) {
 		Map<String, String> person = new HashMap<String, String>();
-
+		
 		person.put(NAME, ServletRequestUtils.getStringParameter(request, "addName", ""));
 		person.put(BIRTH_DATE, ServletRequestUtils.getStringParameter(request, "addBirthdate", ""));
 		person.put(AGE, ServletRequestUtils.getStringParameter(request, "addAge", ""));

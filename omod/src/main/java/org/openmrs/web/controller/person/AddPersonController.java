@@ -111,7 +111,7 @@ public class AddPersonController extends SimpleFormController {
 		String personType = person.get(PERSON_TYPE);
 		String personp = person.get(PATIENT_PRESENT);
 		
-		if (StringUtils.isNotEmpty(personId)) {			
+		if (StringUtils.isNotEmpty(personId)) {
 			// if they didn't pick a person, continue on to the edit screen no matter what type of view was requested)
 			if ("view".equals(viewType) || "shortEdit".equals(viewType)) {
 				viewType = "shortEdit";
@@ -120,10 +120,7 @@ public class AddPersonController extends SimpleFormController {
 			}
 			
 			return new ModelAndView(new RedirectView(getPersonURL("", personType, viewType, request)));
-		} else if (StringUtils.isNotEmpty(personp)) {
-			return new ModelAndView(new RedirectView(request.getContextPath()
-			        + "/admin/patients/shortPatientForm.form?fhirPatientId=" + personp));
-		} else {			
+		} else {
 			// if they picked a person, go to the type of view that was requested
 			
 			// if they selected view, do a double check to make sure that type of person already exists
@@ -223,118 +220,8 @@ public class AddPersonController extends SimpleFormController {
 					person.put("gender", null);
 				}
 				
-				//personList = new Vector<PersonListItem>();
-
-
-				// IGenericClient client = new FhirLegacyUIConfig().getFhirClient();
-				IGenericClient client = Context.getRegisteredComponent("clientRegistryFhirClient",
-						IGenericClient.class);
-
-
-						String[] words = name.split(" ");
-						String fhirGender= "";
-						if (gender.equals("F")){
-							fhirGender="female";
-						}else if(gender.equals("M")){
-							fhirGender="male";
-
-						}
-
-				try {
-					 List<org.hl7.fhir.r4.model.Patient> mypatients = client
-							.search()
-							.forResource(org.hl7.fhir.r4.model.Patient.class)
-							.where(org.hl7.fhir.r4.model.Patient.FAMILY.matchesExactly().value(words[words.length -1]))
-							.and(org.hl7.fhir.r4.model.Patient.GIVEN.matchesExactly().value(words[0]))
-							.and(org.hl7.fhir.r4.model.Patient.GENDER.exactly().code(fhirGender))
-							.returnBundle(Bundle.class)
-							.execute()
-							.getEntry()
-							.stream()
-							.map(e -> (org.hl7.fhir.r4.model.Patient) e.getResource())
-							.collect(Collectors.toList());
-						
-							for (org.hl7.fhir.r4.model.Patient fhirPatient : mypatients) {
-									PersonListItem personLI = new PersonListItem();
-									// Set patient identifier
-									//PatientLI.setIdentifier(fhirPatient.getIdentifierFirstRep().getValue());
-									personLI.setUuid(fhirPatient.getIdentifierFirstRep().getValue());
-									// Set patient name
-									List<org.hl7.fhir.r4.model.StringType> givenNames = fhirPatient.getNameFirstRep().getGiven();
-									if (!givenNames.isEmpty()) {
-										personLI.setGivenName(WebUtil.escapeHTML(givenNames.get(0).getValue()));
-				
-										StringBuilder sb = new StringBuilder();
-										for (int i = 1; i < givenNames.size(); i++) {
-											sb.append(givenNames.get(i).getValue()).append(" ");
-										}
-				
-										if (sb.length() > 0) {
-											sb.deleteCharAt(sb.length() - 1);
-										}
-				
-										personLI.setMiddleName(WebUtil.escapeHTML(sb.toString()));
-				
-									}
-				
-									personLI.setFamilyName(WebUtil.escapeHTML(fhirPatient.getNameFirstRep().getFamily()));
-									// Set patient date of birth
-									if (fhirPatient.hasBirthDate()) {
-										personLI.setBirthdate(fhirPatient.getBirthDate());
-										personLI.setBirthdateString(WebUtil.formatDate(fhirPatient.getBirthDate()));
-									}
-				
-									switch (fhirPatient.getBirthDateElement().getPrecision()) {
-										case DAY:
-										personLI.setBirthdateEstimated(false);
-											break;
-										case MONTH:
-										case YEAR:
-										personLI.setBirthdateEstimated(true);
-											break;
-									}
-									// Set patient Age
-									LocalDate today = LocalDate.now();
-									LocalDate localBirthDate = fhirPatient.getBirthDate().toInstant()
-											.atZone(java.time.ZoneId.systemDefault())
-											.toLocalDate();
-									Period period = Period.between(localBirthDate, today);
-									personLI.setAge(period.getYears());
-									// Set patient gender
-									if (fhirPatient.hasGender()) {
-										switch (fhirPatient.getGender()) {
-											case MALE:
-												personLI.setGender("M");
-												break;
-											case FEMALE:
-												personLI.setGender("F");
-												break;
-											case OTHER:
-												personLI.setGender("O");
-												break;
-											case UNKNOWN:
-												personLI.setGender("U");
-												break;
-										}
-									}
-									// Tag for patient from HAPI
-									personLI.setPatientPresent(fhirPatient.getIdElement().getIdPart());
-									personList.add(personLI);
-				
-								
-				
-							}
-				
-					// How do we search by partial identifiers and on all identifiers
-
-				} catch (Exception e) {
-					log.error("Error while attempting to reach server", e);
-
-				}
 				for (Person p : ps.getSimilarPeople(name, d, gender)) {
-
-
-
+					
 					personList.add(PersonListItem.createBestMatch(p));
 				}
 			}

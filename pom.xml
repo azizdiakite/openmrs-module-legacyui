@@ -273,14 +273,14 @@
 
     <distributionManagement>
         <repository>
-            <id>openmrs-repo-modules</id>
-            <name>OpenMRS Modules</name>
-            <url>https://mavenrepo.openmrs.org/modules</url>
+          <id>uwdigi-repo-central</id>
+          <name>libs-release</name>
+          <url>https://packages.uwdigi.org/artifactory/libs-release</url>
         </repository>
-        <snapshotRepository>
-            <id>openmrs-repo-snapshots</id>
-            <name>OpenMRS Snapshots</name>
-            <url>https://mavenrepo.openmrs.org/snapshots</url>
+		<snapshotRepository>
+          <id>uwdigi-repo-snapshots</id>
+          <name>libs-snapshot</name>
+          <url>https://packages.uwdigi.org/artifactory/libs-snapshot</url>
         </snapshotRepository>
     </distributionManagement>
 

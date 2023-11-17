@@ -20,7 +20,7 @@
 	</parent>
 
 	<groupId>org.openmrs.module</groupId>
-	<artifactId>legacyui</artifactId>
+	<artifactId>sigdep-legacyui</artifactId>
 	<version>1.15.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Legacy UI Module</name>
@@ -39,9 +39,9 @@
 	</organization>
 
 	<scm>
-        <connection>scm:git:git@github.com:openmrs/openmrs-module-legacyui.git</connection>
-        <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-legacyui.git</developerConnection>
-        <url>https://github.com/openmrs/openmrs-module-legacyui.git</url>
+        <connection>scm:git:https://github.com/SIGDEP-3/openmrs-module-legacyui.git</connection>
+        <developerConnection>scm:git:https://github.com/SIGDEP-3/openmrs-module-legacyui.git</developerConnection>
+        <url>https://github.com/SIGDEP-3/openmrs-module-legacyui.git</url>
       <tag>HEAD</tag>
   </scm>
 
@@ -254,15 +254,10 @@
 
 	<repositories>
 		<repository>
-			<id>openmrs-repo</id>
-			<name>OpenMRS Nexus Repository</name>
-			<url>https://mavenrepo.openmrs.org/public</url>
+			<id>uwdigi-repo-central</id>
+          	<name>DIGI Public Repository</name>
+          	<url>https://packages.uwdigi.org/artifactory/public</url>
 		</repository>
-		<repository>
-          <id>github-packages</id>
-          <name>Github Maven Repo</name>
-          <url>https://maven.pkg.github.com/i-tech-uw/openmrs-module-clientregistry</url>
-        </repository>
 	</repositories>
 
 	<pluginRepositories>

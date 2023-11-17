@@ -14,24 +14,16 @@
 
 	<parent>
 		<groupId>org.openmrs.module</groupId>
-		<artifactId>legacyui</artifactId>
+		<artifactId>sigdep-legacyui</artifactId>
 		<version>1.15.3-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>legacyui-omod</artifactId>
+	<artifactId>sigdep-legacyui-omod</artifactId>
 	<packaging>jar</packaging>
 	<name>Legacy UI Module OMOD</name>
 	<description>OMOD project for LegacyUI</description>
 
 	<dependencies>
-
-		<!-- 
-		Add other dependencies from parent's pom: 
-		<dependency> 
-			<groupId>org.other.library</groupId> 
-			<artifactId>library-name</artifactId> 
-		</dependency> 
-		-->
 		
 		<!-- Begin OpenMRS modules -->
 		
@@ -40,11 +32,9 @@
 			<artifactId>${project.parent.artifactId}-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		
 				
 		<!-- End OpenMRS modules -->
 		
-
 		<!-- Begin OpenMRS core -->
 
 		<dependency>
@@ -133,7 +123,14 @@
 			<artifactId>fhir2-omod</artifactId>
 			<version>1.10.0</version>
 			<scope>provided</scope>
-		  </dependency>
+		</dependency>
+
+		 <dependency>
+			<groupId>org.openmrs</groupId>
+			<artifactId>event-api</artifactId>
+			<version>2.9.0</version>
+			<scope>provided</scope>
+		</dependency> 
 		<!-- <dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-base</artifactId>

@@ -1,0 +1,41 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      - name: Build and Test
+        run: mvn --batch-mode --update-snapshots clean package
+
+      - name: Set settings.xml
+        uses: s4u/maven-settings-action@v2.6.0
+        with:
+          servers: |
+            [{
+              "id": "uwdigi-repo-central",
+              "username": "${{ secrets.MAVEN_REPO_USERNAME }}",
+              "password": "${{ secrets.MAVEN_REPO_PASSWORD }}"
+            },
+            {
+              "id": "uwdigi-repo-snapshots",
+              "username": "${{ secrets.MAVEN_REPO_USERNAME }}",
+              "password": "${{ secrets.MAVEN_REPO_PASSWORD }}"
+            }]
+        if: ${{ github.ref == 'refs/heads/master' && github.repository_owner == 'SIGDEP-3' }}
+
+      - name: Deploy
+        run: mvn --batch-mode clean deploy
+        if: ${{ github.ref == 'refs/heads/master' && github.repository_owner == 'SIGDEP-3' }}

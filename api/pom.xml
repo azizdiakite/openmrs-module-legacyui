@@ -14,27 +14,16 @@
 
 	<parent>
 		<groupId>org.openmrs.module</groupId>
-		<artifactId>legacyui</artifactId>
+		<artifactId>sigdep-legacyui</artifactId>
 		<version>1.15.3-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>legacyui-api</artifactId>
+	<artifactId>sigdep-legacyui-api</artifactId>
 	<packaging>jar</packaging>
 	<name>Legacy UI Module API</name>
 	<description>API project for LegacyUI</description>
 
-	<dependencies>
-	
-		<!-- 
-		Add other dependencies from parent's pom:
-		<dependency>
-			<groupId>org.other.library</groupId> 
-			<artifactId>library-name</artifactId>
-		</dependency> 
-		-->
-
-		
-		
+	<dependencies>	
 
 		<!-- Begin OpenMRS core -->
 		

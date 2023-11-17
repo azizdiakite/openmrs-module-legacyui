@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>sigdep-legacyui</artifactId>
-		<version>1.15.3</version>
+		<version>1.15.4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>sigdep-legacyui-omod</artifactId>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 
+http://maven.apache.org/xsd/settings-1.2.0.xsd"
+  xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <profiles>
+    <profile>
+      <repositories>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>uwdigi-repo-central</id>
+          <name>libs-release</name>
+          <url>https://packages.uwdigi.org/artifactory/libs-release</url>
+        </repository>
+        <repository>
+          <snapshots />
+          <id>uwdigi-repo-snapshots</id>
+          <name>libs-snapshot</name>
+          <url>https://packages.uwdigi.org/artifactory/libs-snapshot</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>uwdigi-repo-central</id>
+          <name>libs-release</name>
+          <url>https://packages.uwdigi.org/artifactory/libs-release</url>
+        </pluginRepository>
+        <pluginRepository>
+          <snapshots />
+          <id>uwdigi-repo-snapshots</id>
+          <name>libs-snapshot</name>
+          <url>https://packages.uwdigi.org/artifactory/libs-snapshot</url>
+        </pluginRepository>
+      </pluginRepositories>
+      <id>default</id>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>default</activeProfile>
+  </activeProfiles>
+  <servers>
+    <server>
+      <username>${env.MAVEN_REPO_USERNAME}</username>
+      <password>${env.MAVEN_REPO_PASSWORD}</password>
+      <id>uwdigi-repo-central</id>
+    </server>
+    <server>
+      <username>${env.MAVEN_REPO_USERNAME}</username>
+      <password>${env.MAVEN_REPO_PASSWORD}</password>
+      <id>uwdigi-repo-snapshots</id>
+    </server>
+    <server>
+      <username>${env.GITHUB_ACTOR}</username>
+      <password>${env.GITHUB_TOKEN}</password>
+      <id>github</id>
+    </server>
+  </servers>
+</settings>

@@ -9,6 +9,7 @@
 ### Maven ###
 target/
 pom.xml.versionsBackup
+
 #############
 
 ### Eclipse ###
@@ -65,6 +66,7 @@ nb-configuration.xml
 !.gitignore
 !.gitattributes
 !.github
+!.maven-settings.xml
 *~
 #############
 

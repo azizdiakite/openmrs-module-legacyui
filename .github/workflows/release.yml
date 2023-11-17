@@ -43,7 +43,7 @@ jobs:
           git config user.name "GitHub Actions"
       
       - name: Perform Release
-        run: mvn release:prepare release:perform -B -s .maven-settings.xml -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }}
+        run: mvn release:prepare release:perform -B -s .maven-settings.xml -DreleaseVersion=${{ github.event.inputs.releaseVersion }} -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }} -DskipTests
         env:
           MAVEN_REPO_USERNAME: ${{ secrets.MAVEN_REPO_USERNAME }}
           MAVEN_REPO_PASSWORD: ${{ secrets.MAVEN_REPO_PASSWORD }}

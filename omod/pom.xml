@@ -14,11 +14,11 @@
 
 	<parent>
 		<groupId>org.openmrs.module</groupId>
-		<artifactId>sigdep-legacyui</artifactId>
-		<version>1.15.4-SNAPSHOT</version>
+		<artifactId>legacyui</artifactId>
+		<version>1.15.4-sigdep-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>sigdep-legacyui-omod</artifactId>
+	<artifactId>legacyui-omod</artifactId>
 	<packaging>jar</packaging>
 	<name>Legacy UI Module OMOD</name>
 	<description>OMOD project for LegacyUI</description>

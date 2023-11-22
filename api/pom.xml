@@ -14,11 +14,11 @@
 
 	<parent>
 		<groupId>org.openmrs.module</groupId>
-		<artifactId>sigdep-legacyui</artifactId>
-		<version>1.15.4-SNAPSHOT</version>
+		<artifactId>legacyui</artifactId>
+		<version>1.15.4-sigdep-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>sigdep-legacyui-api</artifactId>
+	<artifactId>legacyui-api</artifactId>
 	<packaging>jar</packaging>
 	<name>Legacy UI Module API</name>
 	<description>API project for LegacyUI</description>

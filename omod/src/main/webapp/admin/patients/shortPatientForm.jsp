@@ -314,6 +314,23 @@
 	.lastCell {
 		border-bottom: 1px lightgray solid;
 	}
+
+			/* Define a specific class for the table */
+	.custom-table {
+		border-collapse: collapse;
+		width: 100%;
+		margin-top: 20px;
+	}
+
+	.custom-table th, .custom-table td {
+		border: 1px solid #dddddd;
+		text-align: left;
+		padding: 8px;
+	}
+
+	.custom-dialog {
+		top: 10px !important; 
+	}
 </style>
 
 <openmrs:globalProperty key="use_patient_attribute.mothersName" defaultValue="false" var="showMothersName"/>
@@ -321,6 +338,8 @@
 <spring:hasBindErrors name="patientModel">
     <openmrs_tag:errorNotify errors="${errors}" />
 </spring:hasBindErrors>
+<span id="extraData1" style="display: none;">${opencMatches}</span>
+<span id="extraData2" style="display: none;">${queryError}</span>
 
 <form:form method="post" action="shortPatientForm.form" onsubmit="removeHiddenRows()" modelAttribute="patientModel">
 	<c:if test="${patientModel.patient.patientId == null}"><h2><openmrs:message code="Patient.create"/></h2></c:if>
@@ -681,20 +700,193 @@
 		</td>
 	</tr>
 	</table>
-	
+	<input type="hidden" id="continueFlag" name="continueFlag" >
+
 	<input type="hidden" name="patientId" value="<c:out value="${param.patientId}" />" />
 	
 	<br />
 	<input type="submit" value="<openmrs:message code="general.save" />" name="action" id="addButton"> &nbsp; &nbsp; 
+
 	<input type="button" value="<openmrs:message code="general.back" />" onclick="history.go(-1);">	
 </form:form>
 
 <script type="text/javascript">
-	updateAge();
-	var idT = document.getElementById('identifiers0.identifierType');
-	var idTi = idT.options[idT.selectedIndex].value;
-	toggleLocationBoxAndIndentifierTypeWarning(idTi,'initialLocationBox0',0);
+updateAge();
+var idT = document.getElementById('identifiers0.identifierType');
+var idTi = idT.options[idT.selectedIndex].value;
+toggleLocationBoxAndIndentifierTypeWarning(idTi,'initialLocationBox0',0);
+//	window.onload = function() {
+var content = document.getElementById('extraData1').textContent;
+var content2 = document.getElementById('extraData2').textContent;
 
+if (content.trim() !== '') {
+    // Your script code here
+    //alert('Fetched Data: ' + document.getElementById('extraData').textContent);
+    $j('<div>').dialog({
+        title: '<openmrs:message code="Patient.merge.title"/>',
+        autoOpen: true, // Automatically open the dialog when the page loads
+        draggable: false,
+        resizable: false,
+        width: '95%',
+        dialogClass: 'custom-dialog', // Define a custom CSS class
+        modal: true,
+        buttons: {
+			"Cancel": function() {
+                $j(this).dialog("close");
+            },
+            "Continue": function() {
+                $j(this).dialog("close");
+                $j('#continueFlag').val('continue');
+                //$j('input[name="continueFlag"]').val('yourDynamicValue');
+
+                $j('#addButton').click();
+
+
+            }
+            
+        },
+        open: function() {
+            // var tableHtml = createTable(jsonObject); // Create the table
+            //$j(this).html(tableHtml); // Set the table as the dialog content
+            //document.getElementById('extraData1').textContent;
+            //var content = document.getElementById('extraData1').textContent;
+            // $j(this).html(content);
+            $j(this).html('<div id="container"></div>' );
+
+            var jsonObject = null;
+            try {
+                jsonObject = JSON.parse(content);
+                console.log(jsonObject);
+            } catch (error) {
+                console.error('Error parsing JSON:', error);
+            }
+            createTable(jsonObject.parent, 'Nouveau Patient', '#7C7AD2');
+            createTable(jsonObject.auto, 'Correspondances Auto.','#33CCCC');
+            createTable(jsonObject.potential, 'Correspondances potentielles', '#FFD966');
+            createTable(jsonObject.conflict, 'Conflits de correspondance','#FF8C66');
+
+        }
+    });
+
+    function createTable(data, category, color) {
+        var tableHtml = '<table class="custom-table">';
+        tableHtml += '<thead><tr style="background-color: ' + color + ';"><th>ID</th><th>Prenom(s)</th><th>Nom de famille</th><th>Date de naissance</th><th>Genre</th><th>Telephone</th><th>Extensions</th><th>code ARV</th><th>Status</th><th>Action</th></tr></thead>';
+        tableHtml += '<tbody>';
+
+        if (data.length === 0) {
+            tableHtml += '<tr><td colspan="10">Aucun patient disponible</td></tr>';
+        } else {
+            for (var i = 0; i < data.length; i++) {
+                tableHtml += '<tr>';
+                tableHtml += '<td>' + data[i].id + '</td>';
+                tableHtml += '<td>' + data[i].given + '</td>';
+                tableHtml += '<td>' + data[i].family + '</td>';
+                tableHtml += '<td>' + data[i].birthDate + '</td>';
+                tableHtml += '<td>' + data[i].gender + '</td>';
+                tableHtml += '<td>' + data[i].phone + '</td>';
+
+                // Separate columns for extensions
+                tableHtml += '<td>';
+                for (var extensionKey in data[i]) {
+                    if (extensionKey.startsWith('extension_')) {
+                        tableHtml += '<div><strong>' + extensionKey.substring(10) + ':</strong> ' + data[i][extensionKey] + '</div>';
+                    }
+                }
+                tableHtml += '</td>';
+
+                // Separate columns for identifiers
+                tableHtml += '<td>';
+                for (var identifierKey in data[i]) {
+                    if (identifierKey.startsWith('identifier_')) {
+                        tableHtml += '<div><strong>' + identifierKey.substring(11) + ':</strong> ' + data[i][identifierKey] + '</div>';
+                    }
+                }
+                tableHtml += '</td>';
+
+                tableHtml += '<td>';
+				for (var extensionKey in data[i]) {
+                    if (extensionKey.startsWith('extension_patient_status')) {
+                        tableHtml += data[i][extensionKey];
+                    }
+                }
+                tableHtml += '</td>';
+
+
+                if(category !== 'Nouveau Patient'){
+                    tableHtml += '<td><button class="importButton" onclick="importData(this)">Import</button></td>';
+                }else{
+                    tableHtml += '<td><button class="importButton" onclick="ContinueCreate(this)">Create</button></td>';
+                }
+                tableHtml += '</tr>';
+            }
+        }
+
+        tableHtml += '</tbody>';
+        tableHtml += '</table>';
+
+        $j('#container').append('<h2>' + category + '</h2>');
+        $j('#container').append(tableHtml);
+    }
+
+    function importData(button) {
+        // Find the closest tr (table row) to the clicked button
+        var row = button.closest('tr');
+
+        // Get the content of the first td (assuming it contains the ID)
+        var id = row.querySelector('td:first-child').textContent;
+        document.location = "shortPatientForm.form?fhirPatientId=" + id;
+
+    }
+
+	function ContinueCreate(button) {
+		$j('.custom-dialog').find('button:contains("Continue")').click();
+    }
+
+    function handleSaveResults(result) {
+        // This method will be called by DWR with the search results
+        // Do something with the search results here, such as displaying them on the page
+        if (result.hasOwnProperty("success")) {
+            document.location = "admin/patients/shortPatientForm.form?fhirPatientId=" + result["success"];
+
+        } else {
+            alert("Error: " + result["error"]);
+
+        }
+    }
+	$j('.custom-dialog').parent().find('button:contains("Continue")').hide();
+
+}else if (content2.trim() !== ''){
+	$j('<div>').dialog({
+        title: '<openmrs:message code="Patient.merge.title"/>',
+        autoOpen: true, // Automatically open the dialog when the page loads
+        draggable: false,
+        resizable: false,
+        width: '95%',
+        dialogClass: 'custom-dialog', // Define a custom CSS class
+        modal: true,
+        buttons: {
+            "Continue": function() {
+                $j(this).dialog("close");
+                $j('#continueFlag').val('continue');
+                //$j('input[name="continueFlag"]').val('yourDynamicValue');
+
+                $j('#addButton').click();
+
+
+            },
+            "Cancel": function() {
+                $j(this).dialog("close");
+            }
+        },
+        open: function() {
+            // var tableHtml = createTable(jsonObject); // Create the table
+            //$j(this).html(tableHtml); // Set the table as the dialog content
+            //document.getElementById('extraData1').textContent;
+            var content = document.getElementById('extraData2').textContent;
+             $j(this).html(content);
+            
+        }
+    });
+};
 </script>
-
 <%@ include file="/WEB-INF/view/module/legacyui/template/footer.jsp" %>

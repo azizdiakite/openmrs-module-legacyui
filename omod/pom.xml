@@ -83,7 +83,12 @@
 		</dependency>
 		
 		<!-- End OpenMRS core -->
-		
+		<dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.9.1</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.openmrs.directwebremoting</groupId>
 			<artifactId>dwr</artifactId>

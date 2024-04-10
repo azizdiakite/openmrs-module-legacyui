@@ -395,4 +395,33 @@
 		</description>
 	</globalProperty>
 
+	<globalProperty>
+		<property>legacyui.enableMatchCheck</property>
+		<defaultValue>true</defaultValue>
+		<description>
+			Allow OpenCR match check before patient creation
+		</description>
+	</globalProperty>
+
+	<globalProperty>
+		<property>opencrMatchesUrl</property>
+		<defaultValue>https://test2.cihis.org/openhimcore/CR/fhir/matches/</defaultValue>
+		<description>
+			OpenCR matches url
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>opencrIdsMapping</property>
+		<defaultValue>http://openelis-global.org/pat_nationalId|6b6e9d94-015b-48f6-ac95-da239512ff91, https://openmrs.org/UPI|1bdba5bf-b074-458a-bba1-c6d58d799089</defaultValue>
+		<description>
+			OpenCR systems mapping to OpenMRS Identifier types UUIDs e.g http://clientregistry.org/artnumber|6b6e9d94-015b-48f6-ac95-da239512ff91, http://clientregistry.org/artnumber|6b6e9d94-015b-48f6-ac95-da239512ff91
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>opencr.opencrClientTimeOut</property>
+		<defaultValue>30</defaultValue>
+		<description>
+			OpenCR client timeout in seconds
+		</description>
+	</globalProperty>
 </module>

@@ -70,8 +70,6 @@ public class LegacyUIActivator extends BaseModuleActivator implements Applicatio
 	public void started() {
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(this);
 		
-		createFhirPatientIdentierSystem();
-		
 		log.info("Legacy UI Module started");
 	}
 	
@@ -87,33 +85,6 @@ public class LegacyUIActivator extends BaseModuleActivator implements Applicatio
 	 */
 	public void stopped() {
 		log.info("Legacy UI Module stopped");
-	}
-	
-	private void createFhirPatientIdentierSystem() {
-		
-		List<PatientIdentifierType> pidTypes = patientService.getAllPatientIdentifierTypes(false);
-		for (PatientIdentifierType pidType : pidTypes) {
-			Optional<FhirPatientIdentifierSystem> existingIdSystem = fhirPatientIdentifierSystemService
-			        .getFhirPatientIdentifierSystem(pidType);
-			if (existingIdSystem.isPresent()) {
-				existingIdSystem.get().setPatientIdentifierType(pidType);
-				//existingIdSystem.get().setUrl("http://openelis-global.org/pat_xx");
-				existingIdSystem.get().setUrl("https://openmrs.org/" + pidType.getName().replace(" ", "_"));
-				
-				fhirPatientIdentifierSystemService.saveFhirPatientIdentifierSystem(existingIdSystem.get());
-			} else {
-				FhirPatientIdentifierSystem idSystem = new FhirPatientIdentifierSystem();
-				idSystem.setName(pidType.getName() + " ID System");
-				idSystem.setPatientIdentifierType(pidType);
-				pidType.getName();
-				idSystem.setUrl("https://openmrs.org/" + pidType.getName().replace(" ", "_"));
-				fhirPatientIdentifierSystemService.saveFhirPatientIdentifierSystem(idSystem);
-			}
-		}
-		
-		/* PatientIdentifierType pidType = patientService
-		        .getPatientIdentifierTypeByUuid("b3b24192-6856-46fd-ab4e-acde31f80c85"); */
-		
 	}
 	
 	@Override

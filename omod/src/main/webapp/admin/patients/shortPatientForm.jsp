@@ -1,3 +1,4 @@
+<%@page contentType="text/html; charset=UTF-8"%>
 <%@ include file="/WEB-INF/view/module/legacyui/template/include.jsp" %>
 
 <openmrs:require privilege="Add Patients" otherwise="/login.htm" redirect="/admin/patients/shortPatientForm.form" />
@@ -718,12 +719,12 @@ toggleLocationBoxAndIndentifierTypeWarning(idTi,'initialLocationBox0',0);
 //	window.onload = function() {
 var content = document.getElementById('extraData1').textContent;
 var content2 = document.getElementById('extraData2').textContent;
-
+var isAutoTransferred = false;
 if (content.trim() !== '') {
     // Your script code here
     //alert('Fetched Data: ' + document.getElementById('extraData').textContent);
     $j('<div>').dialog({
-        title: '<openmrs:message code="Patient.merge.title"/>',
+        title: '<openmrs:message code="legacyui.patient.matchingResults"/>',
         autoOpen: true, // Automatically open the dialog when the page loads
         draggable: false,
         resizable: false,
@@ -760,17 +761,16 @@ if (content.trim() !== '') {
             } catch (error) {
                 console.error('Error parsing JSON:', error);
             }
-            createTable(jsonObject.parent, 'Nouveau Patient', '#7C7AD2');
-            createTable(jsonObject.auto, 'Correspondances Auto.','#33CCCC');
-            createTable(jsonObject.potential, 'Correspondances potentielles', '#FFD966');
-            createTable(jsonObject.conflict, 'Conflits de correspondance','#FF8C66');
-
+            createTable(jsonObject.parent, 'Nouveau Patient:', '#7C7AD2');
+            createTable(jsonObject.auto, 'Correspondances parfaites:','#33CCCC');
+            createTable(jsonObject.potential, 'Correspondances potentielles:', '#FFD966');
+            createTable(jsonObject.conflict, 'Conflits de correspondance:','#FF8C66');
         }
     });
 
     function createTable(data, category, color) {
         var tableHtml = '<table class="custom-table">';
-        tableHtml += '<thead><tr style="background-color: ' + color + ';"><th>ID</th><th>Prenom(s)</th><th>Nom de famille</th><th>Date de naissance</th><th>Genre</th><th>Telephone</th><th>Extensions</th><th>code ARV</th><th>Status</th><th>Action</th></tr></thead>';
+        tableHtml += '<thead><tr style="background-color: ' + color + ';"><th style="display: none;">ID</th><th>Nom de famille</th><th>Prenom(s)</th><th>Date de naissance</th><th>Sexe</th><th>Telephone</th><th>code d&apos;	identification</th><th>Status</th><th>Site</th><th>Action</th></tr></thead>';
         tableHtml += '<tbody>';
 
         if (data.length === 0) {
@@ -778,53 +778,54 @@ if (content.trim() !== '') {
         } else {
             for (var i = 0; i < data.length; i++) {
                 tableHtml += '<tr>';
-                tableHtml += '<td>' + data[i].id + '</td>';
+                tableHtml += '<td style="display: none;">' + data[i].id + '</td>';
+				tableHtml += '<td>' + data[i].family + '</td>';
                 tableHtml += '<td>' + data[i].given + '</td>';
-                tableHtml += '<td>' + data[i].family + '</td>';
-                tableHtml += '<td>' + data[i].birthDate + '</td>';
+				tableHtml += '<td>' + new Date(data[i].birthDate).toLocaleDateString('en-GB') + '</td>';
+
                 tableHtml += '<td>' + data[i].gender + '</td>';
                 tableHtml += '<td>' + data[i].phone + '</td>';
-
-                // Separate columns for extensions
-                tableHtml += '<td>';
-                for (var extensionKey in data[i]) {
-                    if (extensionKey.startsWith('extension_')) {
-                        tableHtml += '<div><strong>' + extensionKey.substring(10) + ':</strong> ' + data[i][extensionKey] + '</div>';
-                    }
-                }
-                tableHtml += '</td>';
 
                 // Separate columns for identifiers
                 tableHtml += '<td>';
                 for (var identifierKey in data[i]) {
-                    if (identifierKey.startsWith('identifier_')) {
-                        tableHtml += '<div><strong>' + identifierKey.substring(11) + ':</strong> ' + data[i][identifierKey] + '</div>';
-                    }
+                    if (identifierKey.startsWith('identifier_') && identifierKey.substring(11) !== 'http://clientregistry.org/openmrs') {
+                        tableHtml += '<div><strong>' + (identifierKey.substring(11) === 'http://openelis-global.org/pat_nationalId'? 'CODE ARV': identifierKey.substring(11) === 'https://openmrs.org/UPI'? 'UPI': '')  + ':</strong> ' + data[i][identifierKey] + '</div>';
+                    }																	
                 }
                 tableHtml += '</td>';
 
                 tableHtml += '<td>';
 				for (var extensionKey in data[i]) {
                     if (extensionKey.startsWith('extension_patient_status')) {
-                        tableHtml += data[i][extensionKey];
+						if(extensionKey === 'extension_patient_status' && data[i][extensionKey].normalize('NFKD') === 'Transféré(e)'.normalize('NFKD')){
+							isAutoTransferred = true;
+						}
+						tableHtml += (new Date(data[i][extensionKey]).toString() !== 'Invalid Date' ? new Date(data[i][extensionKey]).toLocaleDateString('en-US') : data[i][extensionKey]) + '<br>';
+
                     }
                 }
                 tableHtml += '</td>';
+				tableHtml += '<td>' + data[i].source + '</td>';
 
-
-                if(category !== 'Nouveau Patient'){
+                if(category == 'Correspondances parfaites:' && isAutoTransferred){
                     tableHtml += '<td><button class="importButton" onclick="importData(this)">Import</button></td>';
-                }else{
+                }else if(category == 'Nouveau Patient:'){
                     tableHtml += '<td><button class="importButton" onclick="ContinueCreate(this)">Create</button></td>';
-                }
+                }else{
+					tableHtml += '<td></td>';
+
+				}
                 tableHtml += '</tr>';
+				isAutoTransferred = false;
+
             }
         }
 
         tableHtml += '</tbody>';
         tableHtml += '</table>';
 
-        $j('#container').append('<h2>' + category + '</h2>');
+        $j('#container').append('<h2>' + category + ' ' + data.length + '</h2>');
         $j('#container').append(tableHtml);
     }
 
@@ -857,7 +858,7 @@ if (content.trim() !== '') {
 
 }else if (content2.trim() !== ''){
 	$j('<div>').dialog({
-        title: '<openmrs:message code="Patient.merge.title"/>',
+        title: '<openmrs:message code="legacyui.patient.matchingResults"/>',
         autoOpen: true, // Automatically open the dialog when the page loads
         draggable: false,
         resizable: false,

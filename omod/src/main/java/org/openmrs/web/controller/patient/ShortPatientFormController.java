@@ -300,12 +300,12 @@ public class ShortPatientFormController {
 
 			for (PersonAttribute iterable_element : patient.getActiveAttributes()) {
 				if (iterable_element.getAttributeType().getUuid().equals(Context.getAdministrationService()
-						.getGlobalProperty("fhir2.personContactPointAttributeTypeUuid")))
+						.getGlobalProperty("fhir2.personContactPointAttributeTypeUuid"))){
 					contactPoint.setId(iterable_element.getUuid());
 				contactPoint.setValue(iterable_element.getValue());
 				contactPoint.setUse(ContactPoint.ContactPointUse.MOBILE);
 				contactPoint.setSystem(ContactPoint.ContactPointSystem.PHONE);
-
+}
 			}
 
 			if (opencrMatchesCheckFlag.equals("true")) {

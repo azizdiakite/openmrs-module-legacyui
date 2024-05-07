@@ -801,7 +801,7 @@ if (content.trim() !== '') {
 						if(extensionKey === 'extension_patient_status' && data[i][extensionKey].normalize('NFKD') === 'Transféré(e)'.normalize('NFKD')){
 							isAutoTransferred = true;
 						}
-						tableHtml += (new Date(data[i][extensionKey]).toString() !== 'Invalid Date' ? new Date(data[i][extensionKey]).toLocaleDateString('en-US') : data[i][extensionKey]) + '<br>';
+						tableHtml += '<strong>' + (extensionKey.substring(10) === 'patient_status'? 'Patient Status': extensionKey.substring(10) === 'patient_status_date'? 'Patient Status Date': extensionKey.substring(10) === 'patient_date_enrollement'? 'Patient Enrollment Date': '') + ':</strong> ' + (new Date(data[i][extensionKey]).toString() !== 'Invalid Date' ? new Date(data[i][extensionKey]).toLocaleDateString('en-US') : data[i][extensionKey]) + '<br>';
 
                     }
                 }

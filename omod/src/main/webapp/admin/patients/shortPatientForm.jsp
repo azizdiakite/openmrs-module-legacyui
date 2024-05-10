@@ -752,6 +752,15 @@ if (content.trim() !== '') {
             //document.getElementById('extraData1').textContent;
             //var content = document.getElementById('extraData1').textContent;
             // $j(this).html(content);
+			var searchParams = new URLSearchParams(window.location.search);
+			var previousUrl = document.referrer;
+			var urlParams = new URLSearchParams(new URL(previousUrl).search);
+
+			var fhirPatientParam = urlParams.get('fhirPatientId');
+			if (fhirPatientParam !== null) {
+			$j('.custom-dialog > *').css('background-color', '#babad9');
+			} else {
+			}
             $j(this).html('<div id="container"></div>' );
 
             var jsonObject = null;

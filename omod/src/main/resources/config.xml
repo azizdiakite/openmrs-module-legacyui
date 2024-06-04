@@ -424,4 +424,18 @@
 			OpenCR client timeout in seconds
 		</description>
 	</globalProperty>
+		<globalProperty>
+		<property>clientregistry.username</property>
+		<defaultValue>sigdep3</defaultValue>
+		<description>
+			Username for BasicAuth for Client Registry
+		</description>
+	</globalProperty>
+		<globalProperty>
+		<property>clientregistry.password</property>
+		<defaultValue>sigdep3</defaultValue>
+		<description>
+			Password for BasicAuth for Client Registry
+		</description>
+	</globalProperty>
 </module>

@@ -319,7 +319,13 @@ public class ShortPatientFormController {
 				if (fhirResource != null) {
 					// Now you can safely use the result
 					fhirResource.getName().get(0).setUse(HumanName.NameUse.OFFICIAL);
-
+					HumanName name = fhirResource.getName().get(0);
+					if (name.hasGiven() && !name.getGiven().isEmpty()) {
+						// Trim the first given name
+						String firstGivenName = name.getGiven().get(0).getValue();
+						name.getGiven().get(0).setValue(firstGivenName.trim());
+					}
+			
 					// Create a FhirContext
 					FhirContext fhirContext = FhirContext.forR4();
 
@@ -333,8 +339,8 @@ public class ShortPatientFormController {
 					System.out.println("JSON Payload:\n" + jsonPayload);
 					
 							// Create basic authentication credentials
-							String username = "sigdep3";
-							String password = "sigdep3";
+							String username = Context.getAdministrationService().getGlobalProperty("clientregistry.username");
+							String password = Context.getAdministrationService().getGlobalProperty("clientregistry.password");
 							String credentials = Credentials.basic(username, password);
 
 							Request apiRequest = new Request.Builder()

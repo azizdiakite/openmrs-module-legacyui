@@ -339,6 +339,7 @@
 <spring:hasBindErrors name="patientModel">
     <openmrs_tag:errorNotify errors="${errors}" />
 </spring:hasBindErrors>
+<span id="importedPatientID" style="display: none;">${importedPatientID}</span>
 <span id="extraData1" style="display: none;">${opencMatches}</span>
 <span id="extraData2" style="display: none;">${queryError}</span>
 
@@ -704,7 +705,8 @@
 	<input type="hidden" id="continueFlag" name="continueFlag" >
 
 	<input type="hidden" name="patientId" value="<c:out value="${param.patientId}" />" />
-	
+	<input type="hidden" id="importedPatientId"  name="importedPatientId" value="<c:out value="${param.fhirPatientId}" />" />
+
 	<br />
 	<input type="submit" value="<openmrs:message code="general.save" />" name="action" id="addButton"> &nbsp; &nbsp; 
 
@@ -738,6 +740,8 @@ if (content.trim() !== '') {
             "Continue": function() {
                 $j(this).dialog("close");
                 $j('#continueFlag').val('continue');
+				var importedPatientID = document.getElementById('importedPatientID').textContent;
+                $j('#importedPatientId').val(importedPatientID);
                 //$j('input[name="continueFlag"]').val('yourDynamicValue');
 
                 $j('#addButton').click();
@@ -807,7 +811,9 @@ if (content.trim() !== '') {
                 tableHtml += '<td>';
 				for (var extensionKey in data[i]) {
                     if (extensionKey.startsWith('extension_patient_status')) {
-						if(extensionKey === 'extension_patient_status' && data[i][extensionKey].normalize('NFKD') === 'Transféré(e)'.normalize('NFKD')){
+						if(extensionKey === 'extension_patient_status' && data[i][extensionKey].normalize('NFKD') === 'Transféré(e)'.normalize('NFKD') &&
+						(!data[i]['extension_imported'] || data[i]['extension_imported'] !== 'yes')
+						){
 							isAutoTransferred = true;
 						}
 						tableHtml += '<strong>' + (extensionKey.substring(10) === 'patient_status'? 'Patient Status': extensionKey.substring(10) === 'patient_status_date'? 'Patient Status Date': extensionKey.substring(10) === 'patient_date_enrollement'? 'Patient Enrollment Date': '') + ':</strong> ' + (new Date(data[i][extensionKey]).toString() !== 'Invalid Date' ? new Date(data[i][extensionKey]).toLocaleDateString('en-US') : data[i][extensionKey]) + '<br>';

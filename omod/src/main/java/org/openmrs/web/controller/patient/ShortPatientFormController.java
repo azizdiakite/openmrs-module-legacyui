@@ -245,6 +245,7 @@ public class ShortPatientFormController {
 			@ModelAttribute("personAddressCache") PersonAddress personAddressCache,
 			@ModelAttribute("relationshipsMap") Map<String, Relationship> relationshipsMap,
 			@RequestParam(value = "continueFlag", required = false) String continueFlag,
+			@RequestParam(value = "importedPatientId", required = false) String importedPatientId,
 			@ModelAttribute("patientModel") ShortPatientModel patientModel, BindingResult result, Model model) {
 
 			String opencrClientTimeOut = Context.getAdministrationService().getGlobalProperty(
@@ -261,7 +262,6 @@ public class ShortPatientFormController {
 				"legacyui.enableMatchCheck",
 				"true");
 
-		String token = null;
 		String opencMatches = null;
 
 		// Add the data to the Model
@@ -352,6 +352,9 @@ public class ShortPatientFormController {
 								if (apiResponse.isSuccessful()) {
 									opencMatches = apiResponse.body().string();
 									model.addAttribute("opencMatches", opencMatches);
+									if (importedPatientId != null && !importedPatientId.isEmpty()) {
+										model.addAttribute("importedPatientID", importedPatientId);
+									}
 								} else {
 									model.addAttribute("queryError", "OpenCR patient match issue");
 
@@ -377,12 +380,42 @@ public class ShortPatientFormController {
 				}
 
 			}
-			
+
 			// check if name/address were edited, void them and replace them
 			boolean foundChanges = hasPersonNameOrAddressChanged(patient, personNameCache, personAddressCache);
 
 			try {
 				patient = Context.getPatientService().savePatient(patient);
+				if (importedPatientId != null && !importedPatientId.isEmpty()) {
+					IGenericClient fhirClient = Context.getRegisteredComponent("clientRegistryFhirClient", IGenericClient.class);
+					org.hl7.fhir.r4.model.Patient fhirPatient = fhirClient.read()
+							.resource(org.hl7.fhir.r4.model.Patient.class).withId(importedPatientId).execute();
+							String extensionUrl = "imported";
+					String extensionValue = "yes";
+					// Check if the extension already exists
+					boolean extensionExists = false;
+					for (org.hl7.fhir.r4.model.Extension ext : fhirPatient.getExtension()) {
+						if (extensionUrl.equals(ext.getUrl())) {
+							// Update the existing extension value
+							ext.setValue(new org.hl7.fhir.r4.model.StringType(extensionValue));
+							extensionExists = true;
+							break;
+						}
+					}
+
+					// Add the extension if it doesn’t exist
+					if (!extensionExists) {
+						org.hl7.fhir.r4.model.Extension newExtension = new org.hl7.fhir.r4.model.Extension();
+						newExtension.setUrl(extensionUrl);
+						newExtension.setValue(new org.hl7.fhir.r4.model.StringType(extensionValue));
+						fhirPatient.addExtension(newExtension);
+					}
+
+					// Update the patient resource
+					fhirClient.update()
+						.resource(fhirPatient)
+						.execute();
+				}
 				request.setAttribute(WebConstants.OPENMRS_MSG_ATTR,
 						Context.getMessageSourceService().getMessage("Patient.saved"), WebRequest.SCOPE_SESSION);
 

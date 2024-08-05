@@ -35,7 +35,7 @@ public class GeneralUtils {
 		
 		if (id != null) {
 			
-			// see if this is a parseable int; if so, try looking up concept by id
+			// see if this is a parsable int; if so, try looking up concept by id
 			try { //handle integer: id
 				int conceptId = Integer.parseInt(id);
 				cpt = Context.getConceptService().getConcept(conceptId);
@@ -60,7 +60,7 @@ public class GeneralUtils {
 				}
 			}
 			
-			//handle uuid id: "a3e1302b-74bf-11df-9768-17cfc9833272", if the id matches a uuid format
+			// handle uuid id: "a3e1302b-74bf-11df-9768-17cfc9833272", if the id matches a uuid format
 			if (isValidUuidFormat(id)) {
 				cpt = Context.getConceptService().getConceptByUuid(id);
 			}

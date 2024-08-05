@@ -11,19 +11,14 @@ package org.openmrs.module.legacyui;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.PatientIdentifierType;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.fhir2.api.FhirPatientIdentifierSystemService;
-import org.openmrs.module.fhir2.model.FhirPatientIdentifierSystem;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.

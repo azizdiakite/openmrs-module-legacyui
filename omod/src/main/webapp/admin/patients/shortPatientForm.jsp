@@ -722,6 +722,7 @@ toggleLocationBoxAndIndentifierTypeWarning(idTi,'initialLocationBox0',0);
 var content = document.getElementById('extraData1').textContent;
 var content2 = document.getElementById('extraData2').textContent;
 var isAutoTransferred = false;
+var autoTransferExist = false;
 if (content.trim() !== '') {
     // Your script code here
     //alert('Fetched Data: ' + document.getElementById('extraData').textContent);
@@ -778,6 +779,10 @@ if (content.trim() !== '') {
             createTable(jsonObject.auto, 'Correspondances parfaites:','#33CCCC');
             createTable(jsonObject.potential, 'Correspondances potentielles:', '#FFD966');
             createTable(jsonObject.conflict, 'Conflits de correspondance:','#FF8C66');
+
+			if (fhirPatientParam !== null) {
+			$j('.createButton').show().css('display', 'block');
+			}
         }
     });
 
@@ -824,9 +829,10 @@ if (content.trim() !== '') {
 				tableHtml += '<td>' + data[i].source + '</td>';
 
                 if(category == 'Correspondances parfaites:' && isAutoTransferred){
+					autoTransferExist = true;
                     tableHtml += '<td><button class="importButton" onclick="importData(this)">Import</button></td>';
                 }else if(category == 'Nouveau Patient:'){
-                    tableHtml += '<td><button class="importButton" onclick="ContinueCreate(this)">Create</button></td>';
+                    tableHtml += '<td><button class="createButton" onclick="ContinueCreate(this)">Create</button></td>';
                 }else{
 					tableHtml += '<td></td>';
 
@@ -842,6 +848,9 @@ if (content.trim() !== '') {
 
         $j('#container').append('<h2>' + category + ' ' + data.length + '</h2>');
         $j('#container').append(tableHtml);
+		if (autoTransferExist) {
+			$j('.createButton').hide();
+		}
     }
 
     function importData(button) {

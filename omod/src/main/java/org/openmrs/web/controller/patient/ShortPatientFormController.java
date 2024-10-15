@@ -311,6 +311,7 @@ public class ShortPatientFormController {
 			if (opencrMatchesCheckFlag.equals("true")) {
 				List<ContactPoint> myList = new ArrayList<>();
 				myList.add(contactPoint);
+				Context.clearSession();
 				org.hl7.fhir.r4.model.Patient fhirResource = patientTranslator.toFhirResource(patient);
 
 				fhirResource.setTelecom(myList);

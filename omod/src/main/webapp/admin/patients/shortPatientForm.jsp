@@ -781,7 +781,25 @@ if (content.trim() !== '') {
             createTable(jsonObject.conflict, 'Conflits de correspondance:','#FF8C66');
 
 			if (fhirPatientParam !== null) {
-			$j('.createButton').show().css('display', 'block');
+				$j('.createButton').show().css('display', 'block');
+				$j('.importButton').hide();
+
+			}else {
+				if ($j('.createCheckbox').length > 0 && !$j('.importButton:visible').length) {
+					$j('.createButton').hide();
+
+					$j('.createCheckbox').change(function() {
+						const allChecked = $j('.createCheckbox').length === $j('.createCheckbox:checked').length;
+
+						if (allChecked) {
+							$j('.createButton').show().css('display', 'block');
+
+						} else {
+							$j('.createButton').hide();
+
+						}
+					});
+				}
 			}
         }
     });
@@ -833,6 +851,8 @@ if (content.trim() !== '') {
                     tableHtml += '<td><button class="importButton" onclick="importData(this)">Import</button></td>';
                 }else if(category == 'Nouveau Patient:'){
                     tableHtml += '<td><button class="createButton" onclick="ContinueCreate(this)">Create</button></td>';
+                }else if(category == 'Correspondances potentielles:'){
+					tableHtml += '<td><input type="checkbox" class="createCheckbox"></td>';
                 }else{
 					tableHtml += '<td></td>';
 

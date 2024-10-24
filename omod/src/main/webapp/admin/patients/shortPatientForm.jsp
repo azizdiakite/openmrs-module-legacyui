@@ -735,7 +735,7 @@ if (content.trim() !== '') {
         dialogClass: 'custom-dialog', // Define a custom CSS class
         modal: true,
         buttons: {
-			"Cancel": function() {
+			"Annuler": function() {
                 $j(this).dialog("close");
             },
             "Continue": function() {
@@ -778,7 +778,6 @@ if (content.trim() !== '') {
             createTable(jsonObject.parent, 'Nouveau Patient:', '#7C7AD2');
             createTable(jsonObject.auto, 'Correspondances parfaites:','#33CCCC');
             createTable(jsonObject.potential, 'Correspondances potentielles:', '#FFD966');
-            createTable(jsonObject.conflict, 'Conflits de correspondance:','#FF8C66');
 
 			if (fhirPatientParam !== null) {
 				$j('.createButton').show().css('display', 'block');
@@ -848,9 +847,9 @@ if (content.trim() !== '') {
 
                 if(category == 'Correspondances parfaites:' && isAutoTransferred){
 					autoTransferExist = true;
-                    tableHtml += '<td><button class="importButton" onclick="importData(this)">Import</button></td>';
+                    tableHtml += '<td><button class="importButton" onclick="importData(this)">Importer</button></td>';
                 }else if(category == 'Nouveau Patient:'){
-                    tableHtml += '<td><button class="createButton" onclick="ContinueCreate(this)">Create</button></td>';
+                    tableHtml += '<td><button class="createButton" onclick="ContinueCreate(this)">Créer</button></td>';
                 }else if(category == 'Correspondances potentielles:'){
 					tableHtml += '<td><input type="checkbox" class="createCheckbox"></td>';
                 }else{

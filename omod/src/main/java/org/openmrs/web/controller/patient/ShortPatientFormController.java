@@ -25,7 +25,6 @@ import ca.uhn.fhir.parser.IParser;
 
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.Patient.ContactComponent;
 import org.hl7.fhir.r4.model.HumanName;
 import org.openmrs.Concept;
 import org.openmrs.Location;
@@ -67,9 +66,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import okhttp3.MediaType;
@@ -82,7 +78,6 @@ import okhttp3.Credentials;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
-import java.util.UUID;
 
 /**
  * This controller is used for the "mini"/"new"/"short" patient form. Only key/important attributes
@@ -308,7 +303,7 @@ public class ShortPatientFormController {
 }
 			}
 
-			if (opencrMatchesCheckFlag.equals("true")) {
+			if (opencrMatchesCheckFlag.equals("true") && patient.getPatientId() == null) {
 				List<ContactPoint> myList = new ArrayList<>();
 				myList.add(contactPoint);
 				Context.clearSession();

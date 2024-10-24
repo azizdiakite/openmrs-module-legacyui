@@ -11,14 +11,20 @@ package org.openmrs.module.legacyui;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.api.PatientService;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.DaemonToken;
+import org.openmrs.module.DaemonTokenAware;
 import org.openmrs.module.ModuleActivator;
 import org.openmrs.module.fhir2.api.FhirPatientIdentifierSystemService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.openmrs.event.EventListener;
+import org.openmrs.event.Event;
+import org.openmrs.event.Event.Action;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -26,11 +32,15 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LegacyUIActivator extends BaseModuleActivator implements ApplicationContextAware {
+public class LegacyUIActivator extends BaseModuleActivator implements ApplicationContextAware, DaemonTokenAware {
 	
 	protected Log log = LogFactory.getLog(getClass());
 	
 	private static ApplicationContext applicationContext;
+	
+	private DaemonToken daemonToken;
+	
+	private EventListener eventListener;
 	
 	@Autowired
 	PatientService patientService;
@@ -64,7 +74,8 @@ public class LegacyUIActivator extends BaseModuleActivator implements Applicatio
 	 */
 	public void started() {
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(this);
-		
+		eventListener = new EncounterEventListener(daemonToken);
+		Event.subscribe(Encounter.class, Action.CREATED.name(), eventListener);
 		log.info("Legacy UI Module started");
 	}
 	
@@ -86,6 +97,11 @@ public class LegacyUIActivator extends BaseModuleActivator implements Applicatio
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		// TODO Auto-generated method stub
 		this.applicationContext = applicationContext;
+	}
+	
+	@Override
+	public void setDaemonToken(DaemonToken token) {
+		this.daemonToken = token;
 	}
 	
 }
